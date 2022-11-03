@@ -1,5 +1,5 @@
 {
-  "name": "backend-template",
+  "name": "savesmart_backend",
   "version": "1.0.0",
   "description": "Zamijeni s nazivom aplikacije",
   "main": "src/index.js",

@@ -121,10 +121,6 @@ export default {
           img: "",
           opis: "6",
         },
-        {
-          img: "",
-          opis: "aaaaa",
-        },
       ],
     };
   },

@@ -3,58 +3,13 @@
     <div class="row">
       <div class="col"></div>
       <div class="col-6">
-        <h1 class="mb-5">Tvoj profil</h1>
-        <div class="row">
-          <div class="col">
-            <img
-              src="https://placehold.co/200"
-              class="rounded float-start"
-              alt="..."
-            />
-          </div>
-          <div class="col-9">
-            <h5 class="text-break mt-2">Filip Bastijanić</h5>
-            <hr />
-            <h5 class="text-break">Opis:</h5>
+        <ProfileComp></ProfileComp>
+        <PrimanjaComp></PrimanjaComp>
 
-            <p class="text-break text-md">
-              Jeo sam naranče i upao u predikament
-            </p>
-            <hr />
-            <h5 class="text-break">Pridružio se</h5>
-            <p class="text-beak text-md">2. veljače 2023</p>
-          </div>
-        </div>
-        <div>
-          <div class="row mt-5 text-break">
-            <h3>Tvoja primanja</h3>
-            <div class="row mt-2 ms-2">
-              <div class="col"><h4>Plaća : 2000€</h4></div>
-              <div class="col"><h4>Prema štednji: 500€</h4></div>
-              <hr />
-            </div>
-
-            <div class="row mt-2 ms-2">
-              <div class="col"><h4>Iznajmljivanje : 1000€</h4></div>
-              <div class="col"><h4>Prema štednji: 150€</h4></div>
-              <hr />
-            </div>
-            <div class="row mt-2 ms-2">
-              <div class="col"><h4>Total : 3000€</h4></div>
-              <div class="col"><h4>Total Prema štednji: 650€</h4></div>
-              <hr />
-            </div>
-
-            <div class="row mt-2 ms-2">
-              <div class="col">
-                <button class="btn btn-primary">Dodaj primanje</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!-- ###############################FRENDIČI#####################-->
         <div class="row mt-5 text-break">
           <h3>Tvoji prijatelji</h3>
-          <p class="text-secondary ms-3">2300 prijatelja</p>
+          <p class="text-secondary ms-3">{{ friendsCount }} prijatelja</p>
         </div>
         <div class="row">
           <div class="col">
@@ -129,16 +84,126 @@
               <h6 class="">prijatelj 1</h6>
             </div>
           </div>
+          <button class="btn btn-primary" @click="addFriend">
+            Dodaj prijatelja
+          </button>
         </div>
       </div>
 
       <div class="col"></div>
     </div>
+
+    <!--MODAL #################################################-->
+
+    <my-upload
+      @crop-success="cropSuccess"
+      @crop-upload-success="cropUploadSuccess"
+      @crop-upload-fail="cropUploadFail"
+      v-model="show"
+      :width="200"
+      :height="200"
+      url=""
+      lang-type="en"
+      img-format="png"
+      :no-circle="true"
+      :no-square="true"
+    ></my-upload>
   </div>
 </template>
 
 <script>
+import { Profile } from "@/Warehouse/Profile";
+import myUpload from "vue-image-crop-upload";
+import ProfileComp from "@/components/ProfileComp.vue";
+import PrimanjaComp from "@/components/PrimanjaComp.vue";
 export default {
   name: "ProfileStart",
+  components: { "my-upload": myUpload, ProfileComp, PrimanjaComp },
+
+  data() {
+    return {
+      friendsCount: 0,
+      Ime: {},
+      more: {},
+      avatarParams: {},
+      show: false,
+      imgDataUrl: "",
+      displayDate: "0 / 0 / 0",
+      primanja: [
+        { izvor: "Plaća", iznosIzv: 2000, odvojio: 500 },
+        { izvor: "Iznajmljivanje", iznosIzv: 1000, odvojio: 300 },
+        { izvor: "Dodatno", iznosIzv: 1000, odvojio: 300 },
+      ],
+      total: {
+        stednja: 0,
+        primanja: 0,
+      },
+    };
+  },
+  mounted() {
+    this.Get();
+    this.izracunajTotal(this.total);
+  },
+  methods: {
+    async Get() {
+      this.Ime = await Profile.getProfile();
+      let pom = await Profile.getMore(this.Ime._id);
+      this.more = {
+        ...pom,
+        opis: "Jeo sam naranče i upao u predikament",
+      };
+      this.friendsCount = this.more.friends.length;
+      console.log(this.more);
+      this.imgDataUrl = this.more.avatar;
+    },
+    izracunajTotal(total) {
+      this.primanja.forEach((element) => {
+        total.primanja += element.iznosIzv;
+        total.stednja += element.odvojio;
+      });
+    },
+    toggleShow() {
+      this.show = !this.show;
+    },
+    async cropSuccess(imgDataUrl, field) {
+      console.log("-------- crop success --------", field);
+      let avatarParams = {
+        _id: this.Ime._id,
+        avatar: imgDataUrl,
+      };
+      this.imgDataUrl = "";
+      await Profile.setAvatar(avatarParams);
+
+      this.imgDataUrl = imgDataUrl;
+    },
+    /**
+     * upload success
+     *
+     * [param] jsonData  server api return data, already json encode
+     * [param] field
+     */
+    cropUploadSuccess(jsonData, field) {
+      console.log("-------- upload success --------");
+      console.log(jsonData);
+      console.log("field: " + field);
+    },
+    /**
+     * upload fail
+     *
+     * [param] status    server api return error status, like 500
+     * [param] field
+     */
+    cropUploadFail(status, field) {
+      console.log("-------- upload fail --------");
+      console.log(status);
+      console.log("field: " + field);
+    },
+    /**
+     * crop success
+     *
+     * [param] imgDataUrl
+     * [param] field
+     */
+  },
 };
 </script>

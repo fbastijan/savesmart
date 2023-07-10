@@ -13,39 +13,43 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="#">Navbar</a>
+
+        <a class="navbar-brand" href="#">
+          <img
+            src="@/assets/LOGOSS.png"
+            alt="Logo"
+            width="30"
+            height="24"
+            class="d-inline-block align-text-top"
+          />
+          Savesmart</a
+        >
         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
           <!-- TU SU TI LINKOVI OD NAVBARA-->
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <router-link to="/profile" class="nav-link active">
-                Home</router-link
-              >
+              <router-link to="/profile" class="nav-link"> Profile</router-link>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
+              <router-link to="/goals" class="nav-link"> Štednja</router-link>
             </li>
             <li class="nav-item">
-              <a class="nav-link disabled">Disabled</a>
+              <router-link to="/Login" class="nav-link"> Login</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/signup" class="nav-link"> Signup</router-link>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" @click="signout">Signout</a>
             </li>
           </ul>
-          <form class="d-flex" role="search">
-            <input
-              class="form-control me-2"
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-            />
-            <button class="btn btn-outline-success" type="submit">
-              Search
-            </button>
-          </form>
         </div>
       </div>
     </nav>
-    <router-view></router-view>
+    <router-view class="min-vh-100"></router-view>
 
-    <footer class="bg-light text-center text-white">
+    <footer class="bg-light text-center text-white mt-auto mb-0">
       <!-- Copyright -->
       <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
         © 2020 Copyright:
@@ -59,9 +63,16 @@
 </template>
 
 <script>
+import { auth } from "@/Warehouse/Auth";
 export default {
   name: "App",
   components: {},
+  methods: {
+    signout() {
+      auth.logout();
+      this.$router.push("/login");
+    },
+  },
 };
 </script>
 

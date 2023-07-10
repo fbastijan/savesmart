@@ -1,8 +1,28 @@
-import express from 'express';
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const passport = require("passport");
+const db = require("./config/keys").mongoUri;
+const app = express();
+app.use(bodyParser.urlencoded({ extended: false, limit: "50mb" }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(cors());
+app.use(passport.initialize());
+require("./config/passport")(passport);
+mongoose
+  .connect(db)
+  .then(console.log("uspio sam"))
+  .catch((e) => {
+    console.log(e);
+  });
 
-const app = express()  // instanciranje aplikacije
-const port = 3000  // port na kojem će web server slušati
+const users = require("./routes/api/users");
+const image = require("./routes/api/image");
+app.use("/api/users", users);
+app.use("/api/image", image);
 
-app.get('/', (req, res) => res.send('Hello World'))
-
-app.listen(port, () => console.log(`Slušam na portu ${port}!`))
+app.get("/", (req, res) => {
+  res.send("hello");
+});
+app.listen(3000, () => console.log("server started"));

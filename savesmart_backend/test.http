@@ -1,0 +1,13 @@
+### Request 1
+GET http://localhost:3000/
+### Request 2
+POST http://localhost:3000/api/users/register 
+Content-Type: "application/json"
+
+{
+"name" :"filip bastijanic",
+"username": "filipbasti",
+"password":"123456",
+"email":"filipbasti@gmail.com",
+"confirm_password":"123456"
+}

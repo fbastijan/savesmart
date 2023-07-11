@@ -2,7 +2,7 @@ import { Service } from "./Auth";
 
 const Profile = {
   async getMore(id) {
-    let response = await Service.get(`/api/users/${id}`);
+    let response = await Service.get(`/api/users/search/${id}`);
 
     let doc = response.data;
     let recalculateDate = new Date(doc.user.date);
@@ -22,7 +22,9 @@ const Profile = {
       },
     };
     let response = await Service.get("/api/users/profile", config);
+
     let doc = response.data;
+    localStorage.setItem("_id", doc.user._id);
 
     return {
       _id: doc.user._id,

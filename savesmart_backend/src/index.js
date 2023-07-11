@@ -19,8 +19,10 @@ mongoose
 
 const users = require("./routes/api/users");
 const image = require("./routes/api/image");
+const friends = require("./routes/api/friends");
 app.use("/api/users", users);
 app.use("/api/image", image);
+app.use("/api/friends", friends);
 
 app.get("/", (req, res) => {
   res.send("hello");

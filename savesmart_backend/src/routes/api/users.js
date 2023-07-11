@@ -91,7 +91,7 @@ router.get(
     });
   }
 );
-router.get("/:id", async (req, res) => {
+router.get("/search/:id", async (req, res) => {
   let user = await User.findById(req.params.id);
   return res.json({
     user: {
@@ -102,6 +102,20 @@ router.get("/:id", async (req, res) => {
       friends: user.friends,
     },
   });
+});
+router.get("/byname", async (req, res) => {
+  let doc = req.body;
+  try {
+    let users = await User.find(
+      {
+        name: new RegExp(doc.name, "i"),
+      },
+      { username: 1, name: 1, avatar: 1 }
+    );
+    return res.json(users);
+  } catch (error) {
+    return res.status(400).json({ error: error });
+  }
 });
 
 module.exports = router;

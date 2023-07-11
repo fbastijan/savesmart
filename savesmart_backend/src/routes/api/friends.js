@@ -3,17 +3,15 @@ const passport = require("passport");
 const router = express.Router();
 const user = require("../../model/User.js");
 router.patch(
-  "/change",
+  "/add",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     let doc = req.body;
     try {
-      let db = await user.findByIdAndUpdate(
+      let db = await user.update(
         { _id: doc._id },
-        { avatar: req.body.avatar },
-        {
-          new: true,
-        }
+        { $push: doc.friend_id },
+        done
       );
       if (db) {
         return res.status(200).json({ message: "updated user", success: true });

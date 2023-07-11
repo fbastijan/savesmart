@@ -94,7 +94,7 @@ export default {
       imgDataUrl: "https://i.gifer.com/VAyR.gif",
       more: {},
       show: false,
-      Ime: {},
+      Ime: { _id: "" },
       loaded: false,
     };
   },
@@ -103,7 +103,9 @@ export default {
   },
   methods: {
     async Get() {
-      this.Ime = await Profile.getProfile();
+      this.Ime._id = localStorage.getItem("_id");
+      if (!this.Ime._id) this.Ime = await Profile.getProfile();
+
       let pom = await Profile.getMore(this.Ime._id);
       this.more = {
         ...pom,
@@ -119,7 +121,7 @@ export default {
     async cropSuccess(imgDataUrl, field) {
       console.log("-------- crop success --------", field);
       let avatarParams = {
-        _id: this.info._id,
+        _id: this.Ime._id,
         avatar: imgDataUrl,
       };
       this.imgDataUrl = "";

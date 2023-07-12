@@ -7,11 +7,11 @@ router.patch(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     let doc = req.body;
+    console.log(doc);
     try {
-      let db = await user.update(
+      let db = await user.findOneAndUpdate(
         { _id: doc._id },
-        { $push: doc.friend_id },
-        done
+        { $push: { friends: doc.friend_id } }
       );
       if (db) {
         return res.status(200).json({ message: "updated user", success: true });

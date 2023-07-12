@@ -103,7 +103,7 @@ router.get("/search/:id", async (req, res) => {
     },
   });
 });
-router.get("/byname", async (req, res) => {
+router.post("/byname", async (req, res) => {
   let doc = req.body;
   try {
     let users = await User.find(

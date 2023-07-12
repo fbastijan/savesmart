@@ -2,7 +2,7 @@
   <div>
     <div class="row mt-5 text-break">
       <h3>Tvoji prijatelji</h3>
-      <p class="text-secondary ms-3">{{ friendsCount }} prijatelja</p>
+      <p class="text-secondary ms-3">0 prijatelja</p>
     </div>
     <div class="row">
       <div class="col">
@@ -129,12 +129,32 @@
                   Search
                 </button>
               </div>
-              <ul class="list-group">
-                <li class="list-group-item">{{ found[0] }}</li>
-                <li class="list-group-item">A second item</li>
-                <li class="list-group-item">A third item</li>
-                <li class="list-group-item">A fourth item</li>
-                <li class="list-group-item">And a fifth one</li>
+              <ul
+                class="list-group"
+                v-for="(found, index) in found"
+                :key="index"
+              >
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-start"
+                >
+                  <div class="d-flex">
+                    <img
+                      :src="found.avatar"
+                      alt=""
+                      class="img-fluid rounded"
+                      style="height: 50px; width: 50px"
+                    />
+                    <div class="ms-2 me-auto">
+                      <div class="fw-bold">{{ found.username }}</div>
+                      {{ found.name }}
+                    </div>
+                  </div>
+                  <div class="py-2">
+                    <button class="btn btn-primary" @click="add(found._id)">
+                      Dodaj
+                    </button>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -159,16 +179,20 @@ export default {
   props: ["friendsCount"],
   data() {
     return {
-      query: "",
-      found: [{ _id: "", name: "", username: "", avatar: "" }],
+      query: null,
+      found: [],
     };
   },
 
   methods: {
     async search() {
-      let res = await friends.Search("gogogogo");
+      let res = await friends.Search(this.query);
 
-      this.found = res.data;
+      this.found = res;
+      console.log(res);
+    },
+    async add(friend_id) {
+      let res = await friends.Add(localStorage.getItem("_id"), friend_id);
       console.log(res);
     },
   },

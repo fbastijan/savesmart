@@ -24,7 +24,6 @@ const Profile = {
     let response = await Service.get("/api/users/profile", config);
 
     let doc = response.data;
-    localStorage.setItem("_id", doc.user._id);
 
     return {
       _id: doc.user._id,

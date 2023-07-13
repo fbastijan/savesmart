@@ -131,7 +131,7 @@
               </div>
               <ul
                 class="list-group"
-                v-for="(found, index) in found"
+                v-for="(found, added, index) in found"
                 :key="index"
               >
                 <li
@@ -139,19 +139,29 @@
                 >
                   <div class="d-flex">
                     <img
-                      :src="found.avatar"
+                      :src="found.friend.avatar"
                       alt=""
                       class="img-fluid rounded"
                       style="height: 50px; width: 50px"
                     />
                     <div class="ms-2 me-auto">
-                      <div class="fw-bold">{{ found.username }}</div>
-                      {{ found.name }}
+                      <div class="fw-bold">{{ found.friend.username }}</div>
+                      {{ found.friend.name }}
                     </div>
                   </div>
                   <div class="py-2">
-                    <button class="btn btn-primary" @click="add(found._id)">
-                      Dodaj
+                    <button
+                      class="btn btn-primary"
+                      @click="
+                        add(found._id);
+                        added = true;
+                      "
+                      v-if="!found.added"
+                    >
+                      <i class="bi bi-person-fill-add"></i>
+                    </button>
+                    <button class="btn btn-primary disabled" v-if="found.added">
+                      <i class="bi bi-person-fill-check"></i>
                     </button>
                   </div>
                 </li>
@@ -183,17 +193,45 @@ export default {
       found: [],
     };
   },
-
+  computed: {},
   methods: {
     async search() {
       let res = await friends.Search(this.query);
 
-      this.found = res;
-      console.log(res);
+      this.found = await res.map((element) => {
+        return {
+          added: false,
+          friend: element,
+        };
+      });
+      //this.excludeYou();
+      this.excludeAdded();
     },
     async add(friend_id) {
-      let res = await friends.Add(localStorage.getItem("_id"), friend_id);
+      let res = await friends.Add(sessionStorage.getItem("_id"), friend_id);
       console.log(res);
+    },
+    excludeYou() {
+      let index;
+
+      if (
+        (index = this.found.findIndex(
+          (element) => element.friend._id == sessionStorage.getItem("_id")
+        ))
+      ) {
+        this.found.splice(index, 1);
+      }
+    },
+    excludeAdded() {
+      let existing = JSON.parse(sessionStorage.getItem("more")).friends;
+      this.found = this.found.map((element) => {
+        if (existing.includes(element.friend._id)) {
+          return { added: true, friend: element.friend };
+        } else {
+          return element;
+        }
+      });
+      console.log(this.found);
     },
   },
 };

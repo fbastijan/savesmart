@@ -92,9 +92,9 @@ export default {
   data() {
     return {
       imgDataUrl: "https://i.gifer.com/VAyR.gif",
-      more: {},
+      more: null,
       show: false,
-      Ime: { _id: "" },
+      Ime: { _id: null },
       loaded: false,
     };
   },
@@ -103,15 +103,18 @@ export default {
   },
   methods: {
     async Get() {
-      this.Ime._id = localStorage.getItem("_id");
-      if (!this.Ime._id) this.Ime = await Profile.getProfile();
+      this.Ime._id = sessionStorage.getItem("_id");
+      if (!this.Ime._id) {
+        this.Ime = await Profile.getProfile();
+        sessionStorage.setItem("_id", this.Ime._id);
+      }
+      this.more = JSON.parse(sessionStorage.getItem("more"));
+      if (!this.more) {
+        this.more = await Profile.getMore(this.Ime._id);
+        sessionStorage.setItem("more", JSON.stringify(this.more));
+        this.friendsCount = this.more.friends.length;
+      }
 
-      let pom = await Profile.getMore(this.Ime._id);
-      this.more = {
-        ...pom,
-        opis: "Jeo sam naranče i upao u predikament",
-      };
-      this.friendsCount = this.more.friends.length;
       this.imgDataUrl = this.more.avatar;
       this.loaded = true;
     },

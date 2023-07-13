@@ -16,8 +16,6 @@
 </template>
 
 <script>
-import { Profile } from "@/Warehouse/Profile";
-
 import ProfileComp from "@/components/ProfileComp.vue";
 import PrimanjaComp from "@/components/PrimanjaComp.vue";
 import FriendsComp from "@/components/FriendsComp.vue";
@@ -36,21 +34,7 @@ export default {
       displayDate: "0 / 0 / 0",
     };
   },
-  mounted() {
-    this.Get();
-  },
-  methods: {
-    async Get() {
-      this.Ime = await Profile.getProfile();
-      let pom = await Profile.getMore(this.Ime._id);
-      this.more = {
-        ...pom,
-        opis: "Jeo sam naranče i upao u predikament",
-      };
-      this.friendsCount = this.more.friends.length;
-
-      this.imgDataUrl = this.more.avatar;
-    },
-  },
+  mounted() {},
+  methods: {},
 };
 </script>

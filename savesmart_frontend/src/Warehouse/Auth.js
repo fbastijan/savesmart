@@ -30,6 +30,7 @@ const auth = {
 
   logout() {
     localStorage.removeItem("token");
+    sessionStorage.clear();
   },
   getUser() {
     return localStorage.getItem("token");
